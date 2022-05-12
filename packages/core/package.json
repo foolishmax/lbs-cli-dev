@@ -17,6 +17,7 @@
     "lib"
   ],
   "publishConfig": {
+    "access": "public",
     "registry": "https://registry.npm.taobao.org/"
   },
   "scripts": {
@@ -25,5 +26,5 @@
   "dependencies": {
     "@lbs-cli-dev/utils": "^1.0.1"
   },
-  "gitHead": "ce69e5f95af1f0b410fa0134c2064fb1a8444527"
+  "gitHead": "ce69e5f95af1f0b410fa0134c2064fb1a8444527",
 }
