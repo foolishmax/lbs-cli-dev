@@ -1,6 +1,6 @@
 {
   "name": "@lbs-cli-dev/core",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "lbs-cli-dev core",
   "author": "foolishmax <827864735@qq.com>",
   "homepage": "",
@@ -24,7 +24,7 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@lbs-cli-dev/utils": "^1.0.5"
+    "@lbs-cli-dev/utils": "^1.0.6"
   },
   "gitHead": "f52ef987198c7a2b87ac34b36cdd996d93dd9912"
 }
