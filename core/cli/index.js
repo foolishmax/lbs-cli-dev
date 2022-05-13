@@ -11,6 +11,7 @@ const userHome = require('user-home');
 const pkg = require('./package.json');
 const constant = require('./lib/const');
 
+let args;
 
 function core() {
   try {
@@ -18,9 +19,26 @@ function core() {
     checkNodeVersion();
     checkRoot();
     checkUserHome();
+    checkInputArgs();
   } catch(e) {
     log.error(e.message);
   }
+}
+
+function checkInputArgs() {
+  const minimist = require('minimist');
+  args = minimist(process.argv.slice(2));
+
+  checkArgs();
+}
+
+function checkArgs() {
+  if (args.debug) {
+    process.env.LOG_LEVEL = 'verbose';
+  } else {
+    process.env.LOG_LEVEL = 'info';
+  }
+  log.level = process.env.LOG_LEVEL;
 }
 
 function checkUserHome() {
