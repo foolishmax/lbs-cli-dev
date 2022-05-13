@@ -3,19 +3,19 @@
 module.exports = core;
 
 const path = require('path');
-const sermver = require('semver');
+const semver = require('semver');
 const colors = require('colors/safe');
 const log = require('@lbs-cli-dev/log');
 const pathExists = require('path-exists').sync;
 const userHome = require('user-home');
+const dedent = require('dedent');
 
 const pkg = require('./package.json');
 const constant = require('./lib/const');
 
 let args;
-let config;
 
-function core() {
+async function core() {
   try {
     checkPkgVersion();
     checkNodeVersion();
@@ -23,8 +23,21 @@ function core() {
     checkUserHome();
     checkInputArgs();
     checkEnv();
+    checkGlobalUpdate();
   } catch(e) {
     log.error(e.message);
+  }
+}
+
+async function checkGlobalUpdate() {
+  const {getLastVersion} = require('@lbs-cli-dev/get-npm-info');
+  const currentVersion = pkg.version;
+  const npmName = pkg.name;
+  const lastVersion = await getLastVersion(currentVersion, npmName)
+
+  if (lastVersion && semver.gt(lastVersion, currentVersion)) {
+    log.warn('更新提示',colors.yellow(`请手动更新 ${npmName} ，当前版本：${currentVersion}，最新版本：${lastVersion}
+更新命令：npm install -g ${npmName}`));
   }
 }
 
@@ -85,7 +98,7 @@ function checkNodeVersion() {
   const currentVersion = process.version;
   const lowestNodeVersion = constant.LOWEST_NODE_VERSION;
 
-  if (!sermver.gte(currentVersion, lowestNodeVersion)) {
+  if (!semver.gte(currentVersion, lowestNodeVersion)) {
     throw new Error(colors.red(`lbs-cli-dev 需要安装 v${lowestNodeVersion} 以上版本的 Node.js`))
   }
 }
