@@ -5,9 +5,9 @@
   "author": "foolishmax <827864735@qq.com>",
   "homepage": "",
   "license": "ISC",
-  "main": "lib/index.js",
+  "main": "index.js",
   "bin": {
-    "lbs-cli-dev": "bin/index.js"
+    "lbs-cli-dev": "cli.js"
   },
   "directories": {
     "lib": "lib",
@@ -24,7 +24,14 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@lbs-cli-dev/utils": "^1.0.7"
+    "@lbs-cli-dev/log": "file:../../utils/log",
+    "colors": "^1.4.0",
+    "import-local": "^3.1.0",
+    "npmlog": "^6.0.2",
+    "path-exists": "^4.0.0",
+    "root-check": "^1.0.0",
+    "semver": "^7.3.7",
+    "user-home": "^3.0.0"
   },
   "gitHead": "31a7429833b9b8add1b62d1212fd3eb801c21878"
 }
