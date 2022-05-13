@@ -2,6 +2,7 @@
 
 module.exports = core;
 
+const path = require('path');
 const sermver = require('semver');
 const colors = require('colors/safe');
 const log = require('@lbs-cli-dev/log');
@@ -12,6 +13,7 @@ const pkg = require('./package.json');
 const constant = require('./lib/const');
 
 let args;
+let config;
 
 function core() {
   try {
@@ -20,9 +22,36 @@ function core() {
     checkRoot();
     checkUserHome();
     checkInputArgs();
+    checkEnv();
   } catch(e) {
     log.error(e.message);
   }
+}
+
+function checkEnv() {
+  const dotenv = require('dotenv');
+  const dotenvPath = path.resolve(userHome, '.env');
+
+  if (pathExists(dotenvPath)) {
+    dotenv.config({
+      path: dotenvPath,
+    });
+  }
+  createDefaultConfig();
+}
+
+function createDefaultConfig() {
+  const cliConfig = {
+    home: userHome,
+  };
+
+  if (process.env.CLI_HOME) {
+    cliConfig['cliHome'] = path.join(userHome, process.env.CLI_HOME);
+  } else {
+    cliConfig['cliHome'] = path.join(userHome, constant.DEFAULT_CLI_HOME)
+  }
+
+  process.env.CLI_HOME_PATH = cliConfig.cliHome;
 }
 
 function checkInputArgs() {
