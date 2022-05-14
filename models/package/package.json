@@ -1,7 +1,7 @@
 {
-  "name": "@lbs-cli-dev/exec",
+  "name": "@lbs-cli-dev/package",
   "version": "1.0.7",
-  "description": "exec command package",
+  "description": "package model",
   "author": "foolishmax <827864735@qq.com>",
   "homepage": "https://github.com/foolishmax/lbs-cli-dev#readme",
   "license": "ISC",
@@ -25,8 +25,5 @@
   },
   "bugs": {
     "url": "https://github.com/foolishmax/lbs-cli-dev/issues"
-  },
-  "dependencies": {
-    "@lbs-cli-dev/package": "file:../../models/package"
   }
 }
