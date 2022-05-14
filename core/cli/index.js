@@ -15,22 +15,24 @@ const init = require('@lbs-cli-dev/init');
 const pkg = require('./package.json');
 const constant = require('./lib/const');
 
-let args;
 const program = new commander.Command();
 
 async function core() {
   try {
-    checkPkgVersion();
-    checkNodeVersion();
-    checkRoot();
-    checkUserHome();
-    // checkInputArgs();
-    checkEnv();
-    checkGlobalUpdate();
+    await prepare();
     registerCommand();
   } catch(e) {
     log.error(e.message);
   }
+}
+
+async function prepare() {
+  checkPkgVersion();
+  checkNodeVersion();
+  checkRoot();
+  checkUserHome();
+  checkEnv();
+  await checkGlobalUpdate();
 }
 
 function registerCommand() {
@@ -39,12 +41,16 @@ function registerCommand() {
     .usage('<command> [options]')
     .version(pkg.version)
     .option('-d, --debug', '是否开启调试模式', false)
+    .option('-tp, --targetPath <path>', '是否指定本地调试文件路径', '')
 
   program
     .command('init [projectName]')
     .option('-f, --force', '是否强制初始化项目')
     .action(init)
 
+  program.on('option:targetPath', function() {
+    process.env.CLI_TARGET_PATH = program.targetPath;
+  })
 
   // 开启debug模式
   program.on('option:debug', function() {
@@ -103,22 +109,6 @@ function createDefaultConfig() {
   }
 
   process.env.CLI_HOME_PATH = cliConfig.cliHome;
-}
-
-function checkInputArgs() {
-  const minimist = require('minimist');
-  args = minimist(process.argv.slice(2));
-
-  checkArgs();
-}
-
-function checkArgs() {
-  if (args.debug) {
-    process.env.LOG_LEVEL = 'verbose';
-  } else {
-    process.env.LOG_LEVEL = 'info';
-  }
-  log.level = process.env.LOG_LEVEL;
 }
 
 function checkUserHome() {
