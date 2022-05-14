@@ -4,7 +4,7 @@
   "description": "lbs-cli-dev",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo $npm_package_name"
   },
   "keywords": [],
   "author": "",
