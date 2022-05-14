@@ -27,6 +27,7 @@
     "url": "https://github.com/foolishmax/lbs-cli-dev/issues"
   },
   "dependencies": {
-    "@lbs-cli-dev/package": "file:../../models/package"
+    "@lbs-cli-dev/package": "file:../../models/package",
+    "@lbs-cli-dev/log": "file:../../utils/log"
   }
 }

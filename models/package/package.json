@@ -25,5 +25,8 @@
   },
   "bugs": {
     "url": "https://github.com/foolishmax/lbs-cli-dev/issues"
+  },
+  "dependencies": {
+    "@lbs-cli-dev/utils": "file:../../utils/utils"
   }
 }
