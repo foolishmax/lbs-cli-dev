@@ -11,6 +11,7 @@ const userHome = require('user-home');
 const commander = require('commander');
 
 const init = require('@lbs-cli-dev/init');
+const exec = require('@lbs-cli-dev/exec');
 
 const pkg = require('./package.json');
 const constant = require('./lib/const');
@@ -46,7 +47,7 @@ function registerCommand() {
   program
     .command('init [projectName]')
     .option('-f, --force', '是否强制初始化项目')
-    .action(init)
+    .action(exec)
 
   program.on('option:targetPath', function() {
     process.env.CLI_TARGET_PATH = program.targetPath;
