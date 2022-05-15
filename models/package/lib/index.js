@@ -1,7 +1,10 @@
 'use strict';
 
-const { isObject } = require('@lbs-cli-dev/utils');
+const path = require('path');
+const pkgDir = require('pkg-dir').sync;
 
+const { isObject } = require('@lbs-cli-dev/utils');
+const formatPath = require('@lbs-cli-dev/format-path');
 class Package {
   constructor(options) {
     if (!options) {
@@ -29,8 +32,19 @@ class Package {
 
   }
 
-  getRootFile() {
+  getRootFilePath() {
+    const dir = pkgDir(this.targetPath);
 
+    if (dir) {
+      const pkgFile = require(path.resolve(dir, 'package.json'));
+
+      if (pkgFile?.main) {
+        // (macOS/Window)路径兼容
+        return formatPath(path.resolve(dir, pkgFile?.main));
+      }
+    }
+
+    return null;
   }
 }
 

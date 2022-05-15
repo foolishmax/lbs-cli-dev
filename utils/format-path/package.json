@@ -1,7 +1,7 @@
 {
-  "name": "@lbs-cli-dev/package",
+  "name": "@lbs-cli-dev/format-path",
   "version": "1.0.7",
-  "description": "package model",
+  "description": "format path package",
   "author": "foolishmax <827864735@qq.com>",
   "homepage": "https://github.com/foolishmax/lbs-cli-dev#readme",
   "license": "ISC",
@@ -25,10 +25,5 @@
   },
   "bugs": {
     "url": "https://github.com/foolishmax/lbs-cli-dev/issues"
-  },
-  "dependencies": {
-    "@lbs-cli-dev/utils": "file:../../utils/utils",
-    "@lbs-cli-dev/format-path": "file:../../utils/format-path",
-    "pkg-dir": "^5.0.0"
   }
 }

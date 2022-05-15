@@ -20,10 +20,15 @@ function exec() {
   const packageName = SETTINGS[cmdName];
   const packageVersion = 'lastest';
 
+  if (!targetPath) {
+    targetPath = '';
+  }
+
   const pkg = new Package({
     targetPath,
     packageName,
     packageVersion,
   });
-  console.log(pkg);
+
+  console.log(pkg.getRootFilePath());
 }
