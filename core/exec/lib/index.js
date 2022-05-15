@@ -7,7 +7,8 @@ const log = require("@lbs-cli-dev/log");
 module.exports = exec;
 
 const SETTINGS = {
-  init: "@lbs-cli-dev/init",
+  // init: "@lbs-cli-dev/init",
+  init: "@imooc-cli/init",
 };
 
 const CACHE_DIR = "dependencies";
@@ -40,6 +41,7 @@ async function exec() {
     });
 
     if (await pkg.exists()) {
+      console.log("更新依赖");
     } else {
       await pkg.install();
     }

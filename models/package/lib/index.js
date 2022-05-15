@@ -2,11 +2,15 @@
 
 const path = require("path");
 const pkgDir = require("pkg-dir").sync;
+const pathExists = require("path-exists").sync;
 const npmInstall = require("npminstall");
 
 const { isObject } = require("@lbs-cli-dev/utils");
 const formatPath = require("@lbs-cli-dev/format-path");
-const { getDefaultRegistry } = require("@lbs-cli-dev/get-npm-info");
+const {
+  getDefaultRegistry,
+  getNpmLatestVersion,
+} = require("@lbs-cli-dev/get-npm-info");
 
 class Package {
   constructor(options) {
@@ -21,11 +25,35 @@ class Package {
     this.storePath = options.storePath;
     this.packageName = options.packageName;
     this.packageVersion = options.packageVersion;
+    this.cacheFilePathPrefix = this.packageName.replace("/", "_");
   }
 
-  exists() {}
+  get cacheFilePath() {
+    return path.resolve(
+      this.storePath,
+      `_${this.cacheFilePathPrefix}@${this.packageVersion}@${this.packageName}`
+    );
+  }
 
-  install() {
+  async prepare() {
+    if (this.packageVersion === "latest") {
+      this.packageVersion = await getNpmLatestVersion(this.packageName);
+    }
+    console.log(this.packageVersion, 111);
+  }
+
+  async exists() {
+    if (this.storePath) {
+      await this.prepare();
+
+      return pathExists(this.cacheFilePath);
+    } else {
+      return pathExists(this.targetPath);
+    }
+  }
+
+  async install() {
+    await this.prepare();
     npmInstall({
       root: this.targetPath,
       storeDir: this.storePath,
