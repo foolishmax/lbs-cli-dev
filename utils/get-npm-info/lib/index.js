@@ -7,7 +7,8 @@ const semver = require('semver');
 module.exports = {
   getNpmInfo,
   getNpmVersions,
-  getLastVersion
+  getLastVersion,
+  getDefaultRegistry
 };
 
 async function getLastVersion(baseVersion, npmName, registry) {

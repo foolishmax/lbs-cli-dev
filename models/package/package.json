@@ -27,8 +27,10 @@
     "url": "https://github.com/foolishmax/lbs-cli-dev/issues"
   },
   "dependencies": {
-    "@lbs-cli-dev/utils": "file:../../utils/utils",
     "@lbs-cli-dev/format-path": "file:../../utils/format-path",
+    "@lbs-cli-dev/get-npm-info": "file:../../utils/get-npm-info",
+    "@lbs-cli-dev/utils": "file:../../utils/utils",
+    "npminstall": "^6.1.0",
     "pkg-dir": "^5.0.0"
   }
 }
