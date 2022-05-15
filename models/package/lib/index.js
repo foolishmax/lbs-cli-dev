@@ -4,6 +4,7 @@ const path = require("path");
 const pkgDir = require("pkg-dir").sync;
 const pathExists = require("path-exists").sync;
 const npmInstall = require("npminstall");
+const fse = require("fs-extra");
 
 const { isObject } = require("@lbs-cli-dev/utils");
 const formatPath = require("@lbs-cli-dev/format-path");
@@ -36,10 +37,13 @@ class Package {
   }
 
   async prepare() {
+    if (this.storePath && !pathExists(this.storePath)) {
+      fse.mkdirpSync(this.storePath);
+    }
+
     if (this.packageVersion === "latest") {
       this.packageVersion = await getNpmLatestVersion(this.packageName);
     }
-    console.log(this.packageVersion, 111);
   }
 
   async exists() {
@@ -62,7 +66,39 @@ class Package {
     });
   }
 
-  update() {}
+  getSpecificCacheFilePath(packageVersion) {
+    return path.resolve(
+      this.storePath,
+      `_${this.cacheFilePath}@${packageVersion}@${this.packageName}`
+    );
+  }
+
+  async update() {
+    await this.prepare();
+
+    const latestPackageVersion = await getNpmLatestVersion(this.packageName);
+    const latestFilePath = this.getSpecificCacheFilePath(latestPackageVersion);
+
+    console.log("222", latestPackageVersion, latestFilePath);
+
+    if (!pathExists(latestFilePath)) {
+      await npmInstall({
+        root: this.targetPath,
+        storeDir: this.storePath,
+        registry: getDefaultRegistry(),
+        pkgs: [
+          {
+            name: this.packageName,
+            version: latestPackageVersion,
+          },
+        ],
+      });
+    }
+
+    this.packageVersion = latestPackageVersion;
+
+    console.log(111, this.packageVersion);
+  }
 
   getRootFilePath() {
     const dir = pkgDir(this.targetPath);

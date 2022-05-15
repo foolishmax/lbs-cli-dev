@@ -24,7 +24,7 @@ async function exec() {
   const cmd = arguments[arguments.length - 1];
   const cmdName = cmd.name();
   const packageName = SETTINGS[cmdName];
-  const packageVersion = "latest";
+  const packageVersion = "1.1.0";
 
   if (!targetPath) {
     targetPath = path.resolve(homePath, CACHE_DIR);
@@ -41,7 +41,7 @@ async function exec() {
     });
 
     if (await pkg.exists()) {
-      console.log("更新依赖");
+      await pkg.update();
     } else {
       await pkg.install();
     }
