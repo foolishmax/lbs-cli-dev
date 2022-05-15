@@ -24,7 +24,7 @@ async function exec() {
   const cmd = arguments[arguments.length - 1];
   const cmdName = cmd.name();
   const packageName = SETTINGS[cmdName];
-  const packageVersion = "1.1.0";
+  const packageVersion = "latest";
 
   if (!targetPath) {
     targetPath = path.resolve(homePath, CACHE_DIR);
@@ -54,6 +54,8 @@ async function exec() {
   }
 
   const rootFile = pkg.getRootFilePath();
+
+  console.log("rootFiel", rootFile);
 
   if (rootFile) {
     require(rootFile).apply(null, arguments);

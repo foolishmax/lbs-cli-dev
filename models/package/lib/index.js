@@ -79,8 +79,6 @@ class Package {
     const latestPackageVersion = await getNpmLatestVersion(this.packageName);
     const latestFilePath = this.getSpecificCacheFilePath(latestPackageVersion);
 
-    console.log("222", latestPackageVersion, latestFilePath);
-
     if (!pathExists(latestFilePath)) {
       await npmInstall({
         root: this.targetPath,
@@ -96,23 +94,29 @@ class Package {
     }
 
     this.packageVersion = latestPackageVersion;
-
-    console.log(111, this.packageVersion);
   }
 
   getRootFilePath() {
-    const dir = pkgDir(this.targetPath);
+    function _getRootFile(targetPath) {
+      const dir = pkgDir(targetPath);
 
-    if (dir) {
-      const pkgFile = require(path.resolve(dir, "package.json"));
+      if (dir) {
+        const pkgFile = require(path.resolve(dir, "package.json"));
 
-      if (pkgFile?.main) {
-        // (macOS/Window)路径兼容
-        return formatPath(path.resolve(dir, pkgFile?.main));
+        if (pkgFile?.main) {
+          // (macOS/Window)路径兼容
+          return formatPath(path.resolve(dir, pkgFile?.main));
+        }
       }
+
+      return null;
     }
 
-    return null;
+    if (this.storePath) {
+      return _getRootFile(this.cacheFilePath);
+    } else {
+      return _getRootFile(this.targetPath);
+    }
   }
 }
 
