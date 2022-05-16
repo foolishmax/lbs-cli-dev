@@ -16,12 +16,18 @@ const exec = require("@lbs-cli-dev/exec");
 const pkg = require("./package.json");
 const constant = require("./lib/const");
 
+const cp = require("child_process");
+
 const program = new commander.Command();
 
 async function core() {
   try {
     await prepare();
     registerCommand();
+
+    cp.exec("ls -al", function (err, stdout, stderr) {
+      console.log(err, stdout, stderr);
+    });
   } catch (e) {
     log.error(e.message);
 
@@ -33,7 +39,6 @@ async function core() {
 
 async function prepare() {
   checkPkgVersion();
-  checkNodeVersion();
   checkRoot();
   checkUserHome();
   checkEnv();
@@ -129,19 +134,6 @@ function checkUserHome() {
 function checkRoot() {
   const rootCheck = require("root-check");
   rootCheck();
-}
-
-function checkNodeVersion() {
-  const currentVersion = process.version;
-  const lowestNodeVersion = constant.LOWEST_NODE_VERSION;
-
-  if (!semver.gte(currentVersion, lowestNodeVersion)) {
-    throw new Error(
-      colors.red(
-        `lbs-cli-dev 需要安装 v${lowestNodeVersion} 以上版本的 Node.js`
-      )
-    );
-  }
 }
 
 function checkPkgVersion() {
