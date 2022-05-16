@@ -3,7 +3,6 @@
 const semver = require("semver");
 const colors = require("colors");
 const log = require("@lbs-cli-dev/log");
-const { isObject } = require("@lbs-cli-dev/utils");
 
 const LOWEST_NODE_VERSION = "11.0.0";
 

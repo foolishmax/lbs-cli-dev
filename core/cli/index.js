@@ -16,18 +16,12 @@ const exec = require("@lbs-cli-dev/exec");
 const pkg = require("./package.json");
 const constant = require("./lib/const");
 
-const cp = require("child_process");
-
 const program = new commander.Command();
 
 async function core() {
   try {
     await prepare();
     registerCommand();
-
-    cp.exec("ls -al", function (err, stdout, stderr) {
-      console.log(err, stdout, stderr);
-    });
   } catch (e) {
     log.error(e.message);
 
