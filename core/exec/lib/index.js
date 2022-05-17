@@ -82,7 +82,7 @@ async function exec() {
         process.exit(1);
       });
       child.on("exit", (e) => {
-        log.verbose("命令执行成功");
+        log.verbose(`Process finished with exit code ${e}`);
         process.exit(e);
       });
     } catch (e) {
