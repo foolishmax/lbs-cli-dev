@@ -2,10 +2,14 @@
 
 const fs = require("fs");
 const fse = require("fs-extra");
+const semver = require("semver");
 const inquirer = require("inquirer");
 
 const log = require("@lbs-cli-dev/log");
 const Command = require("@lbs-cli-dev/command");
+
+const TYPE_PROJECT = "project";
+const TYPE_COMPONENT = "component";
 
 class InitCommand extends Command {
   init() {
@@ -56,6 +60,79 @@ class InitCommand extends Command {
           fse.emptyDirSync(localPath);
         }
       }
+    }
+
+    return this.getProjectInfo();
+  }
+
+  async getProjectInfo() {
+    const projectInfo = {};
+    const { _type } = await inquirer.prompt({
+      type: "list",
+      message: "请选择初始化类型",
+      name: "_type",
+      default: TYPE_PROJECT,
+      choices: [
+        {
+          name: "项目",
+          value: TYPE_PROJECT,
+        },
+        {
+          name: "组件",
+          value: TYPE_COMPONENT,
+        },
+      ],
+    });
+
+    if (_type === TYPE_PROJECT) {
+      const o = await inquirer.prompt([
+        {
+          type: "input",
+          name: "projectName",
+          message: "请输入项目名称",
+          default: "",
+          validate: function (v) {
+            const done = this.async();
+            const valid =
+              /^[a-zA-Z]+([-][a-zA-Z][a-zA-Z0-9]*|[_][a-zA-Z][a-zA-Z0-9]*|[a-zA-Z0-9])*$/.test(
+                v
+              );
+            setTimeout(() => {
+              if (!valid) {
+                done("请输入合法的名称");
+                return;
+              }
+              done(null, true);
+            }, 0);
+          },
+          filter: function (v) {
+            return v;
+          },
+        },
+        {
+          type: "input",
+          name: "projectVersion",
+          message: "请输入项目版本号",
+          default: "1.0.0",
+          validate: function (v) {
+            const done = this.async();
+            setTimeout(() => {
+              if (!Boolean(semver.valid(v))) {
+                done("请输入合法的版本号");
+                return;
+              }
+              done(null, true);
+            }, 0);
+          },
+          filter: function (v) {
+            return !!semver.valid(v) ? semver.valid(v) : v;
+          },
+        },
+      ]);
+      console.log(o);
+    }
+
+    if (_type === TYPE_COMPONENT) {
     }
   }
 
