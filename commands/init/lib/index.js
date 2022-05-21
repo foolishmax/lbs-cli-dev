@@ -11,6 +11,8 @@ const Command = require("@lbs-cli-dev/command");
 const TYPE_PROJECT = "project";
 const TYPE_COMPONENT = "component";
 
+const getTemplate = require("./getTemplate");
+
 class InitCommand extends Command {
   init() {
     this.projectName = this._argv[0] || "";
@@ -22,14 +24,27 @@ class InitCommand extends Command {
 
   async exec() {
     try {
-      const ret = await this.prepare();
-      console.log("ret", ret);
+      const projectInfo = await this.prepare();
+      if (projectInfo) {
+        log.verbose("projectInfo", projectInfo);
+        this.projectInfo = projectInfo;
+        this.downloadTemplate();
+      }
     } catch (e) {
       log.error(e.message);
     }
   }
 
+  downloadTemplate() {
+    console.log(this.projectInfo, this.template);
+  }
+
   async prepare() {
+    const template = await getTemplate();
+    if (!template || !template.length) {
+      throw new Error("template does not exist");
+    }
+    this.template = template;
     const localPath = process.cwd();
 
     if (!this.isDirEmpty(localPath)) {
@@ -66,7 +81,7 @@ class InitCommand extends Command {
   }
 
   async getProjectInfo() {
-    const projectInfo = {};
+    let projectInfo = {};
     const { _type } = await inquirer.prompt({
       type: "list",
       message: "请选择初始化类型",
@@ -85,7 +100,7 @@ class InitCommand extends Command {
     });
 
     if (_type === TYPE_PROJECT) {
-      const o = await inquirer.prompt([
+      const project = await inquirer.prompt([
         {
           type: "input",
           name: "projectName",
@@ -129,11 +144,16 @@ class InitCommand extends Command {
           },
         },
       ]);
-      console.log(o);
+      projectInfo = {
+        type: _type,
+        ...project,
+      };
     }
 
     if (_type === TYPE_COMPONENT) {
     }
+
+    return projectInfo;
   }
 
   isDirEmpty(localPath) {

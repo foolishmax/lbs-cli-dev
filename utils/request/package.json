@@ -1,7 +1,7 @@
 {
-  "name": "@lbs-cli-dev/init",
+  "name": "@lbs-cli-dev/request",
   "version": "1.0.0",
-  "description": "project init",
+  "description": "> TODO: description",
   "author": "foolishmax <827864735@qq.com>",
   "homepage": "https://github.com/foolishmax/lbs-cli-dev#readme",
   "license": "ISC",
@@ -27,11 +27,6 @@
     "url": "https://github.com/foolishmax/lbs-cli-dev/issues"
   },
   "dependencies": {
-    "@lbs-cli-dev/command": "file:../../models/command",
-    "@lbs-cli-dev/log": "file:../../utils/log",
-    "@lbs-cli-dev/request": "file:../../utils/request",
-    "fs-extra": "^10.1.0",
-    "inquirer": "^8.2.4",
-    "semver": "^7.3.7"
+    "axios": "^0.27.2"
   }
 }
