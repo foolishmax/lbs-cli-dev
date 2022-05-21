@@ -63,15 +63,25 @@ class InitCommand extends Command {
     if (!(await templateNpm.exists())) {
       const spinner = spinnerStart("installing...");
       await sleep();
-      await templateNpm.install();
-      spinner.stop(true);
-      log.success("install complete");
+      try {
+        await templateNpm.install();
+        log.success("install complete");
+      } catch (e) {
+        throw new Error(e);
+      } finally {
+        spinner.stop(true);
+      }
     } else {
       const spinner = spinnerStart("updating...");
       await sleep();
-      await templateNpm.update();
-      spinner.stop(true);
-      log.success("update complete");
+      try {
+        await templateNpm.update();
+        log.success("update complete");
+      } catch (e) {
+        throw new Error(e);
+      } finally {
+        spinner.stop(true);
+      }
     }
   }
 
