@@ -1,12 +1,16 @@
 "use strict";
 
 const fs = require("fs");
+const path = require("path");
+const userHome = require("user-home");
+const Package = require("@lbs-cli-dev/package");
 const fse = require("fs-extra");
 const semver = require("semver");
 const inquirer = require("inquirer");
 
 const log = require("@lbs-cli-dev/log");
 const Command = require("@lbs-cli-dev/command");
+const { spinnerStart, sleep } = require("@lbs-cli-dev/utils");
 
 const TYPE_PROJECT = "project";
 const TYPE_COMPONENT = "component";
@@ -28,15 +32,47 @@ class InitCommand extends Command {
       if (projectInfo) {
         log.verbose("projectInfo", projectInfo);
         this.projectInfo = projectInfo;
-        this.downloadTemplate();
+        await this.downloadTemplate();
       }
     } catch (e) {
       log.error(e.message);
     }
   }
 
-  downloadTemplate() {
-    console.log(this.projectInfo, this.template);
+  async downloadTemplate() {
+    const { template } = this.projectInfo;
+    const templateInfo = this.template.find(
+      (item) => item.npmName === template
+    );
+
+    const { npmName, version } = templateInfo;
+    const targetPath = path.resolve(userHome, ".lbs-cli", "template");
+    const storePath = path.resolve(
+      userHome,
+      ".lbs-cli",
+      "template",
+      "node_modules"
+    );
+    const templateNpm = new Package({
+      targetPath,
+      storePath,
+      packageName: npmName,
+      packageVersion: version,
+    });
+
+    if (!(await templateNpm.exists())) {
+      const spinner = spinnerStart("installing...");
+      await sleep();
+      await templateNpm.install();
+      spinner.stop(true);
+      log.success("install complete");
+    } else {
+      const spinner = spinnerStart("updating...");
+      await sleep();
+      await templateNpm.update();
+      spinner.stop(true);
+      log.success("update complete");
+    }
   }
 
   async prepare() {
@@ -103,7 +139,7 @@ class InitCommand extends Command {
       const project = await inquirer.prompt([
         {
           type: "input",
-          name: "projectName",
+          name: "_name",
           message: "请输入项目名称",
           default: "",
           validate: function (v) {
@@ -126,7 +162,7 @@ class InitCommand extends Command {
         },
         {
           type: "input",
-          name: "projectVersion",
+          name: "_version",
           message: "请输入项目版本号",
           default: "1.0.0",
           validate: function (v) {
@@ -143,10 +179,18 @@ class InitCommand extends Command {
             return !!semver.valid(v) ? semver.valid(v) : v;
           },
         },
+        {
+          type: "list",
+          name: "_template",
+          message: "请选择项目模版",
+          choices: this.createTemplateChoice(),
+        },
       ]);
       projectInfo = {
         type: _type,
-        ...project,
+        name: project._name,
+        template: project._template,
+        version: project._version,
       };
     }
 
@@ -154,6 +198,13 @@ class InitCommand extends Command {
     }
 
     return projectInfo;
+  }
+
+  createTemplateChoice() {
+    return this.template.map((item) => ({
+      value: item.npmName,
+      name: item.name,
+    }));
   }
 
   isDirEmpty(localPath) {

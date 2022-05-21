@@ -29,9 +29,12 @@
   "dependencies": {
     "@lbs-cli-dev/command": "file:../../models/command",
     "@lbs-cli-dev/log": "file:../../utils/log",
+    "@lbs-cli-dev/package": "file:../../models/package",
     "@lbs-cli-dev/request": "file:../../utils/request",
+    "@lbs-cli-dev/utils": "file:../../utils/utils",
     "fs-extra": "^10.1.0",
     "inquirer": "^8.2.4",
-    "semver": "^7.3.7"
+    "semver": "^7.3.7",
+    "user-home": "^3.0.0"
   }
 }
