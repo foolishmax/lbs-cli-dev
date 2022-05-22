@@ -17,6 +17,9 @@ const TYPE_COMPONENT = "component";
 
 const getTemplate = require("./getTemplate");
 
+const TEMPLATE_TYPE_NORMAL = "normal";
+const TEMPLATE_TYPE_CUSTOM = "custom";
+
 class InitCommand extends Command {
   init() {
     this.projectName = this._argv[0] || "";
@@ -33,10 +36,37 @@ class InitCommand extends Command {
         log.verbose("projectInfo", projectInfo);
         this.projectInfo = projectInfo;
         await this.downloadTemplate();
+        await this.installTemplate();
       }
     } catch (e) {
       log.error(e.message);
     }
+  }
+
+  async installTemplate() {
+    if (this.templateInfo) {
+      const type = this.templateInfo.type;
+      if (!type) {
+        this.templateInfo.type = TEMPLATE_TYPE_NORMAL;
+      }
+      if (type === TEMPLATE_TYPE_NORMAL) {
+        await this.installNormalTemplate();
+      } else if (type === TEMPLATE_TYPE_CUSTOM) {
+        await this.installCustomTemplate();
+      } else {
+        throw new Error("unrecognized template type!");
+      }
+    } else {
+      throw new Error("template information does not exist!");
+    }
+  }
+
+  async installNormalTemplate() {
+    console.log("install normal template");
+  }
+
+  async installCustomTemplate() {
+    console.log("install custom template");
   }
 
   async downloadTemplate() {
@@ -44,6 +74,7 @@ class InitCommand extends Command {
     const templateInfo = this.template.find(
       (item) => item.npmName === template
     );
+    this.templateInfo = templateInfo;
 
     const { npmName, version } = templateInfo;
     const targetPath = path.resolve(userHome, ".lbs-cli", "template");
@@ -65,10 +96,12 @@ class InitCommand extends Command {
       await sleep();
       try {
         await templateNpm.install();
-        log.success("install complete");
       } catch (e) {
         throw new Error(e);
       } finally {
+        if (await templateNpm.exists()) {
+          log.success("install complete");
+        }
         spinner.stop(true);
       }
     } else {
@@ -76,10 +109,12 @@ class InitCommand extends Command {
       await sleep();
       try {
         await templateNpm.update();
-        log.success("update complete");
       } catch (e) {
         throw new Error(e);
       } finally {
+        if (await templateNpm.exists()) {
+          log.success("update complete");
+        }
         spinner.stop(true);
       }
     }
