@@ -62,7 +62,24 @@ class InitCommand extends Command {
   }
 
   async installNormalTemplate() {
-    console.log("install normal template");
+    const spinner = spinnerStart("installing...");
+    await sleep();
+
+    try {
+      const templatePath = path.resolve(
+        this.templateNpm.cacheFilePath,
+        "template"
+      );
+      const targetPath = process.cwd();
+      fse.ensureDirSync(templatePath);
+      fse.ensureDirSync(targetPath);
+      fse.copySync(templatePath, targetPath);
+    } catch (e) {
+      throw e;
+    } finally {
+      spinner.stop(true);
+      log.success("install complete");
+    }
   }
 
   async installCustomTemplate() {
@@ -92,7 +109,7 @@ class InitCommand extends Command {
     });
 
     if (!(await templateNpm.exists())) {
-      const spinner = spinnerStart("installing...");
+      const spinner = spinnerStart("downloading...");
       await sleep();
       try {
         await templateNpm.install();
@@ -100,7 +117,8 @@ class InitCommand extends Command {
         throw new Error(e);
       } finally {
         if (await templateNpm.exists()) {
-          log.success("install complete");
+          log.success("download complete");
+          this.templateNpm = templateNpm;
         }
         spinner.stop(true);
       }
@@ -114,6 +132,7 @@ class InitCommand extends Command {
       } finally {
         if (await templateNpm.exists()) {
           log.success("update complete");
+          this.templateNpm = templateNpm;
         }
         spinner.stop(true);
       }
