@@ -3,7 +3,7 @@
 const path = require("path");
 const Package = require("@lbs-cli-dev/package");
 const log = require("@lbs-cli-dev/log");
-const cp = require("child_process");
+const { exec: spawn } = require("@lbs-cli-dev/utils");
 
 module.exports = exec;
 
@@ -89,12 +89,4 @@ async function exec() {
       log.error(e.message);
     }
   }
-}
-
-function spawn(command, args, options) {
-  const win32 = process.platform === "win32";
-  const cmd = win32 ? "cmd" : command;
-  const cmdArgs = win32 ? ["/c"].concat(command, args) : args;
-
-  return cp.spawn(cmd, cmdArgs, options || {});
 }

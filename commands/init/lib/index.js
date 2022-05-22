@@ -10,7 +10,7 @@ const inquirer = require("inquirer");
 
 const log = require("@lbs-cli-dev/log");
 const Command = require("@lbs-cli-dev/command");
-const { spinnerStart, sleep } = require("@lbs-cli-dev/utils");
+const { spinnerStart, sleep, execAsync } = require("@lbs-cli-dev/utils");
 
 const TYPE_PROJECT = "project";
 const TYPE_COMPONENT = "component";
@@ -79,6 +79,28 @@ class InitCommand extends Command {
     } finally {
       spinner.stop(true);
       log.success("install complete");
+    }
+
+    let installResultCode;
+    const { installCMD, startCMD } = this.templateInfo;
+    if (installCMD) {
+      const [cmd, ...args] = installCMD.split(" ");
+      installResultCode = await execAsync(cmd, args, {
+        stdio: "inherit",
+        cwd: process.cwd(),
+      });
+    }
+
+    if (installResultCode !== 0) {
+      throw new Error("dependencies failed during installation");
+    }
+
+    if (startCMD) {
+      const [cmd, ...args] = startCMD.split(" ");
+      await execAsync(cmd, args, {
+        stdio: "inherit",
+        cwd: process.cwd(),
+      });
     }
   }
 
